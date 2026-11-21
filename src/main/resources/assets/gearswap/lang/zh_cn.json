@@ -1,0 +1,28 @@
+{
+  "container.gearswap.presets": "装备预设",
+
+  "key.category.gearswap.main": "装备预设",
+  "key.gearswap.selector": "预设切换（按住）",
+
+  "gearswap.button.open": "装备预设",
+  "gearswap.button.tooltip": "打开装备预设（主手 + 副手 + 四件盔甲）",
+
+  "gearswap.gui.preset": "预设%s",
+  "gearswap.gui.row_hint": "点击切换到预设 %s（组合键 %s）",
+  "gearswap.gui.slot_hint": "只能放入装备",
+  "gearswap.gui.slot_hint.detail": "这个格子只接受对应部位的装备：头盔 / 胸甲 / 护腿 / 靴子，且每格只放 1 件。",
+  "gearswap.gui.slot_hint.offhand": "副手格：可放任何物品",
+  "gearswap.gui.slot_hint.offhand.detail": "副手不挑物品，武器、盾牌、火把、食物都可以；堆叠物品会整堆放进来。",
+
+  "gearswap.preset.1": "预设 1",
+  "gearswap.preset.2": "预设 2",
+  "gearswap.preset.3": "预设 3",
+
+  "gearswap.hud.title": "按住 %s 选择预设",
+
+  "gearswap.message.switched": "已切换到 %s",
+  "gearswap.message.cleared": "已卸下 %s 的装备",
+  "gearswap.message.nothing": "%s 里没有可切换的装备",
+  "gearswap.message.prevented": "有装备被绑定诅咒锁定，无法脱下",
+  "gearswap.message.backpack_full": "背包已满，无法替换"
+}
