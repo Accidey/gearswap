@@ -1,0 +1,28 @@
+{
+  "container.gearswap.presets": "Gear Presets",
+
+  "key.categories.gearswap": "Gear Swap",
+  "key.gearswap.selector": "Preset selector (hold)",
+
+  "gearswap.button.open": "Gear Presets",
+  "gearswap.button.tooltip": "Open gear presets (main hand + offhand + 4 armor pieces)",
+
+  "gearswap.gui.preset": "Set %s",
+  "gearswap.gui.row_hint": "Click to swap to preset %s (combo %s)",
+  "gearswap.gui.slot_hint": "Equipment only",
+  "gearswap.gui.slot_hint.detail": "This slot only takes gear for its own part: helmet, chestplate, leggings or boots - one item per slot.",
+  "gearswap.gui.slot_hint.offhand": "Offhand slot: any item",
+  "gearswap.gui.slot_hint.offhand.detail": "The offhand takes anything - weapons, shields, torches, food. Stackable items go in as a whole stack.",
+
+  "gearswap.preset.1": "Preset 1",
+  "gearswap.preset.2": "Preset 2",
+  "gearswap.preset.3": "Preset 3",
+
+  "gearswap.hud.title": "Hold %s to pick a preset",
+
+  "gearswap.message.switched": "Swapped to %s",
+  "gearswap.message.cleared": "Removed the gear of %s",
+  "gearswap.message.nothing": "Nothing to swap in %s",
+  "gearswap.message.prevented": "Some armor is bound by a curse and cannot be removed",
+  "gearswap.message.backpack_full": "Backpack is full - cannot swap"
+}
