@@ -1,0 +1,155 @@
+package com.xulai.gearswap.client;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.network.chat.Component;
+
+import com.xulai.gearswap.ButtonPosition;
+import com.xulai.gearswap.GearConfig;
+
+public class GearSwapButton extends Button {
+    private static final int PADDING = 10;
+    private static final int MAX_WIDTH = 150;
+    private static final int GAP = 4;
+    private static final int HEIGHT = 20;
+    private static final float TEXT_HEIGHT = 8.0F;
+    private static final int TEXT_MARGIN = 3;
+    private static final int SCREEN_MARGIN = 2;
+    private static final int LINE_HEIGHT = 9;
+    private static final int VERTICAL_PADDING = 8;
+    private static final int MIN_VERTICAL_WIDTH = 14;
+    private static final int BASELINE_OFFSET = 1;
+    private static final int HELMET_SLOT_Y = 8;
+
+    private final InventoryScreen screen;
+
+    public GearSwapButton(InventoryScreen screen, OnPress onPress) {
+        super(0, 0, measureWidth(), HEIGHT, Component.translatable("gearswap.button.open"), onPress, DEFAULT_NARRATION);
+        this.screen = screen;
+    }
+
+    private static int measureWidth() {
+        Font font = Minecraft.getInstance().font;
+        int textWidth = font.width(Component.translatable("gearswap.button.open"));
+        return Math.min(textWidth + PADDING, MAX_WIDTH);
+    }
+
+    private static boolean isSideways(ButtonPosition position) {
+        return position == ButtonPosition.LEFT || position == ButtonPosition.RIGHT;
+    }
+
+    private static List<String> verticalLines(Component message) {
+        String text = message.getString().trim();
+        List<String> lines = new ArrayList<>();
+        boolean han = text.codePoints().anyMatch(codePoint -> Character.UnicodeScript.of(codePoint) == Character.UnicodeScript.HAN);
+        if (han) {
+            text.codePoints()
+                    .filter(codePoint -> !Character.isWhitespace(codePoint))
+                    .forEach(codePoint -> lines.add(new String(Character.toChars(codePoint))));
+        } else {
+            for (String word : text.split("\\s+")) {
+                if (!word.isEmpty()) {
+                    lines.add(word);
+                }
+            }
+        }
+        return lines;
+    }
+
+    private ButtonPosition applyConfiguredPosition() {
+        ButtonPosition position = GearConfig.buttonPosition();
+        int left = this.screen.getGuiLeft();
+        int top = this.screen.getGuiTop();
+        int panelWidth = this.screen.getXSize();
+        int x;
+        int y;
+
+        if (isSideways(position)) {
+            List<String> lines = verticalLines(this.getMessage());
+            Font font = Minecraft.getInstance().font;
+            int width = MIN_VERTICAL_WIDTH;
+            for (String line : lines) {
+                width = Math.max(width, font.width(line) + TEXT_MARGIN * 2);
+            }
+            this.setWidth(width);
+            this.setHeight(lines.size() * LINE_HEIGHT + VERTICAL_PADDING);
+            y = top + HELMET_SLOT_Y;
+            x = position == ButtonPosition.RIGHT ? left + panelWidth + GAP : left - GAP - this.getWidth();
+        } else {
+            this.setWidth(measureWidth());
+            this.setHeight(HEIGHT);
+            switch (position) {
+                case TOP_LEFT -> {
+                    x = left;
+                    y = top - GAP - this.getHeight();
+                }
+                case TOP_CENTER -> {
+                    x = left + (panelWidth - this.getWidth()) / 2;
+                    y = top - GAP - this.getHeight();
+                }
+                case TOP_RIGHT -> {
+                    x = left + panelWidth - this.getWidth();
+                    y = top - GAP - this.getHeight();
+                }
+                default -> {
+                    x = left - GAP - this.getWidth();
+                    y = top;
+                }
+            }
+        }
+
+        this.setPosition(
+                clamp(x, this.screen.width - this.getWidth() - SCREEN_MARGIN),
+                clamp(y, this.screen.height - this.getHeight() - SCREEN_MARGIN)
+        );
+        return position;
+    }
+
+    private static int clamp(int value, int maximum) {
+        return Math.max(SCREEN_MARGIN, Math.min(maximum, value));
+    }
+
+    private void extractVerticalLabel(GuiGraphicsExtractor graphics, Font font) {
+        List<String> lines = verticalLines(this.getMessage());
+        int y = this.getY() + (this.getHeight() - lines.size() * LINE_HEIGHT) / 2 + BASELINE_OFFSET;
+        int color = this.getFGColor() | 0xFF000000;
+        for (String line : lines) {
+            graphics.text(font, line, this.getX() + (this.getWidth() - font.width(line)) / 2, y, color, false);
+            y += LINE_HEIGHT;
+        }
+    }
+
+    @Override
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        ButtonPosition position = this.applyConfiguredPosition();
+
+        this.extractDefaultSprite(graphics);
+        Font font = Minecraft.getInstance().font;
+        if (isSideways(position)) {
+            this.extractVerticalLabel(graphics, font);
+            return;
+        }
+
+        String text = this.getMessage().getString();
+        int textWidth = font.width(text);
+        int inner = Math.max(1, this.getWidth() - TEXT_MARGIN * 2);
+        if (textWidth > inner) {
+            float scale = (float) inner / (float) textWidth;
+            float drawX = this.getX() + (this.getWidth() - textWidth * scale) / 2.0F;
+            float drawY = this.getY() + (this.getHeight() - TEXT_HEIGHT * scale) / 2.0F;
+            graphics.pose().pushMatrix();
+            graphics.pose().translate(drawX, drawY);
+            graphics.pose().scale(scale, scale);
+            graphics.text(font, text, 0, 0, this.getFGColor() | 0xFF000000, true);
+            graphics.pose().popMatrix();
+        } else {
+            this.extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
+        }
+    }
+}
